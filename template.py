@@ -4,8 +4,7 @@ from keras import utils
 import numpy as np
 from random import *
 from collections import defaultdict
-import matplotlib
-
+import matplotlib.pyplot as plt
 
 zeros = []
 ones = []
@@ -136,4 +135,22 @@ history = model.fit(training_images, training_labels, validation_data = (validat
 # Report Results
 
 print(history.history)
-model.predict(test_images[0].reshape(1, 784))
+for image in test_images:
+    model.predict(image.reshape(1, 784))
+
+# summarize history for accuracy
+plt.plot(history.history['acc'])
+plt.plot(history.history['val_acc'])
+plt.title('model accuracy')
+plt.ylabel('accuracy')
+plt.xlabel('epoch')
+plt.legend(['train', 'test'], loc='upper left')
+plt.show()
+# summarize history for loss
+plt.plot(history.history['loss'])
+plt.plot(history.history['val_loss'])
+plt.title('model loss')
+plt.ylabel('loss')
+plt.xlabel('epoch')
+plt.legend(['train', 'test'], loc='upper left')
+plt.show()

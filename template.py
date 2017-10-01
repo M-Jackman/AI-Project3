@@ -21,52 +21,63 @@ training_images = []
 training_labels = []
 validation_images = []
 validation_labels = []
+# confusion_matrix = np.matrix()
+
 # Image Preprocessing
 
 # get the images intp matrix of matrices
 pictures = np.load('images.npy')
 labels = np.load('labels.npy')
 
+
 # turn all the matrices of images into vectors and add them to a list
 flattened_matrices = []
 for p in pictures:
     flattened_matrices.append(p.reshape(1, 784))
+
+real_pics = []
+for each in flattened_matrices:
+    real_pics.append(each[0])
 
 # turn all the matrices of labels into one-hot vectors
 one_hot_vectors = []
 for l in labels:
     one_hot_vectors.append(utils.to_categorical(l, 10))
 
+real_labels = []
+for each in one_hot_vectors:
+    real_labels.append(each[0])
+
 # put all the labels and pictures into a dictionary in case we need it
-# dictionary = dict(zip(one_hot_vectors, flattened_matrices))
+# dictionary = dict(zip(real_labels, real_pics))
 
 # separate data by number
 for x in range(0, 6500):
     if labels[x] == 0:
-        zeros.append(flattened_matrices[x])
+        zeros.append(real_pics[x])
     elif labels[x] == 1:
-        ones.append(flattened_matrices[x])
+        ones.append(real_pics[x])
     elif labels[x] == 2:
-        twos.append(flattened_matrices[x])
+        twos.append(real_pics[x])
     elif labels[x] == 3:
-        threes.append(flattened_matrices[x])
+        threes.append(real_pics[x])
     elif labels[x] == 4:
-        fours.append(flattened_matrices[x])
+        fours.append(real_pics[x])
     elif labels[x] == 5:
-        fives.append(flattened_matrices[x])
+        fives.append(real_pics[x])
     elif labels[x] == 6:
-        sixes.append(flattened_matrices[x])
+        sixes.append(real_pics[x])
     elif labels[x] == 7:
-        sevens.append(flattened_matrices[x])
+        sevens.append(real_pics[x])
     elif labels[x] == 8:
-        eights.append(flattened_matrices[x])
+        eights.append(real_pics[x])
     elif labels[x] == 9:
-        nines.append(flattened_matrices[x])
+        nines.append(real_pics[x])
 
 # stratified sampling procedure
 
-remaining_labels = one_hot_vectors
-remaining_images = flattened_matrices
+remaining_labels = real_labels
+remaining_images = real_pics
 num_takent = 0
 for x in range(0, 3900):
     random_number = randint(0, 6499-num_takent)
@@ -92,41 +103,37 @@ test_images = remaining_images
 
 
 
+# Model Template
 
-
-
-
-
-# # Model Template
-#
-# model = Sequential()  # declare model
-# model.add(Dense(10, input_shape=(28*28, ), kernel_initializer='he_normal')) # first layer
-# model.add(Activation('relu'))
-# #
-# #
-# #
-# # Fill in Model Here
-# #
-# #
-# model.add(Dense(10, kernel_initializer='he_normal')) # last layer
-# model.add(Activation('softmax'))
+model = Sequential()  # declare model
+model.add(Dense(10, input_shape=(28*28, ), kernel_initializer='he_normal')) # first layer
+model.add(Activation('relu'))
 #
 #
-# # Compile Model
-# model.compile(optimizer='sgd',
-#               loss='categorical_crossentropy',
-#               metrics=['accuracy'])
 #
-# # Train Model
-# history = model.fit(x_train, y_train,
-#                     validation_data = (x_val, y_val),
-#                     epochs=10,
-#                     batch_size=512)
+# Fill in Model Here
 #
 #
-# # Report Results
-#
-# print(history.history)
-# model.predict()
+model.add(Dense(10, kernel_initializer='he_normal')) # last layer
+model.add(Activation('softmax'))
 
 
+# Compile Model
+model.compile(optimizer='sgd',
+              loss='categorical_crossentropy',
+              metrics=['accuracy'])
+
+training_images = np.array(training_images)
+training_labels = np.array(training_labels)
+validation_labels = np.array(validation_labels)
+validation_images = np.array(validation_images)
+
+# print (training_labels)
+# Train Model
+history = model.fit(training_images, training_labels, validation_data = (validation_images, validation_labels), epochs=10, batch_size=512)
+
+
+# Report Results
+
+print(history.history)
+model.predict(test_images[0].reshape(1, 784))

@@ -1,10 +1,12 @@
 from keras.models import Sequential
 from keras.layers import Dense, Activation
+# from keras.activations import
+from keras.initializers import RandomNormal, RandomUniform, he_normal, he_uniform, TruncatedNormal
 from keras import utils
-import numpy as np
 from random import *
-from collections import defaultdict
 import matplotlib.pyplot as plt
+import numpy as np
+from PIL import Image
 
 zeros = []
 ones = []
@@ -20,7 +22,6 @@ training_images = []
 training_labels = []
 validation_images = []
 validation_labels = []
-# confusion_matrix = np.matrix()
 
 # Image Preprocessing
 
@@ -46,9 +47,6 @@ for l in labels:
 real_labels = []
 for each in one_hot_vectors:
     real_labels.append(each[0])
-
-# put all the labels and pictures into a dictionary in case we need it
-# dictionary = dict(zip(real_labels, real_pics))
 
 # separate data by number
 for x in range(0, 6500):
@@ -100,12 +98,10 @@ for x in range(0, 975):
 test_labels = remaining_labels
 test_images = remaining_images
 
-
-
 # Model Template
 
 model = Sequential()  # declare model
-model.add(Dense(10, input_shape=(28*28, ), kernel_initializer='he_normal')) # first layer
+model.add(Dense(10, input_shape=(28*28, ), kernel_initializer=he_uniform(1))) # first layer
 model.add(Activation('relu'))
 #
 #
@@ -113,7 +109,7 @@ model.add(Activation('relu'))
 # Fill in Model Here
 #
 #
-model.add(Dense(10, kernel_initializer='he_normal')) # last layer
+model.add(Dense(10, kernel_initializer=he_uniform(1))) # last layer
 model.add(Activation('softmax'))
 
 
@@ -127,10 +123,8 @@ training_labels = np.array(training_labels)
 validation_labels = np.array(validation_labels)
 validation_images = np.array(validation_images)
 
-# print (training_labels)
 # Train Model
-history = model.fit(training_images, training_labels, validation_data = (validation_images, validation_labels), epochs=10, batch_size=512)
-
+history = model.fit(training_images, training_labels, validation_data = (validation_images, validation_labels), epochs=15, batch_size=1024)
 
 # Report Results
 
@@ -147,10 +141,10 @@ plt.xlabel('epoch')
 plt.legend(['train', 'test'], loc='upper left')
 plt.show()
 # summarize history for loss
-plt.plot(history.history['loss'])
-plt.plot(history.history['val_loss'])
-plt.title('model loss')
-plt.ylabel('loss')
-plt.xlabel('epoch')
-plt.legend(['train', 'test'], loc='upper left')
-plt.show()
+# plt.plot(history.history['loss'])
+# plt.plot(history.history['val_loss'])
+# plt.title('model loss')
+# plt.ylabel('loss')
+# plt.xlabel('epoch')
+# plt.legend(['train', 'test'], loc='upper left')
+# plt.show()

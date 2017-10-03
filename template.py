@@ -1,106 +1,32 @@
 from keras.models import Sequential
 from keras.layers import Dense, Activation
-# from keras.activations import
+from keras.layers.core import Dropout
 from keras.initializers import RandomNormal, RandomUniform, he_normal, he_uniform, TruncatedNormal
 from keras import utils
 from random import *
 import matplotlib.pyplot as plt
 import numpy as np
 from PIL import Image
+import time
 
-zeros = []
-ones = []
-twos = []
-threes = []
-fours = []
-fives = []
-sixes = []
-sevens = []
-eights = []
-nines = []
-training_images = []
-training_labels = []
-validation_images = []
-validation_labels = []
-
-# Image Preprocessing
-
-# get the images intp matrix of matrices
-pictures = np.load('images.npy')
-labels = np.load('labels.npy')
+# Read in data from .npy files
+training_labels = np.load('traininglabels.npy')
+training_images = np.load('trainingimages.npy')
+test_images = np.load('testingimages.npy')
+test_labels = np.load('testinglabels.npy')
+validation_images = np.load('validationimages.npy')
+validation_labels = np.load('validationlabels.npy')
 
 
-# turn all the matrices of images into vectors and add them to a list
-flattened_matrices = []
-for p in pictures:
-    flattened_matrices.append(p.reshape(1, 784))
-
-real_pics = []
-for each in flattened_matrices:
-    real_pics.append(each[0])
-
-# turn all the matrices of labels into one-hot vectors
-one_hot_vectors = []
-for l in labels:
-    one_hot_vectors.append(utils.to_categorical(l, 10))
-
-real_labels = []
-for each in one_hot_vectors:
-    real_labels.append(each[0])
-
-# separate data by number
-for x in range(0, 6500):
-    if labels[x] == 0:
-        zeros.append(real_pics[x])
-    elif labels[x] == 1:
-        ones.append(real_pics[x])
-    elif labels[x] == 2:
-        twos.append(real_pics[x])
-    elif labels[x] == 3:
-        threes.append(real_pics[x])
-    elif labels[x] == 4:
-        fours.append(real_pics[x])
-    elif labels[x] == 5:
-        fives.append(real_pics[x])
-    elif labels[x] == 6:
-        sixes.append(real_pics[x])
-    elif labels[x] == 7:
-        sevens.append(real_pics[x])
-    elif labels[x] == 8:
-        eights.append(real_pics[x])
-    elif labels[x] == 9:
-        nines.append(real_pics[x])
-
-# stratified sampling procedure
-
-remaining_labels = real_labels
-remaining_images = real_pics
-num_takent = 0
-for x in range(0, 3900):
-    random_number = randint(0, 6499-num_takent)
-    training_images.append(remaining_images[random_number])
-    training_labels.append(remaining_labels[random_number])
-    remaining_labels.pop(random_number)
-    remaining_images.pop(random_number)
-    num_takent += 1
-    # training
-
-num_takenv = 0
-for x in range(0, 975):
-    random_number = randint(0, 2599 - num_takenv)
-    validation_images.append(remaining_images[random_number])
-    validation_labels.append(remaining_labels[random_number])
-    remaining_labels.pop(random_number)
-    remaining_images.pop(random_number)
-    num_takenv += 1
-    # validation
-
-test_labels = remaining_labels
-test_images = remaining_images
 
 # Model Template
 
+start = time.time()
 model = Sequential()  # declare model
+model.add(Dense(40, input_shape=(28*28, ), kernel_initializer=he_uniform(1))) # first layer
+model.add(Activation('relu'))
+model.add(Dense(10, input_shape=(28*28, ), kernel_initializer=he_uniform(1))) # first layer
+model.add(Activation('relu'))
 model.add(Dense(10, input_shape=(28*28, ), kernel_initializer=he_uniform(1))) # first layer
 model.add(Activation('relu'))
 #
@@ -128,18 +54,36 @@ history = model.fit(training_images, training_labels, validation_data = (validat
 
 # Report Results
 
-print(history.history)
+# print(history.history)
+predictions = []
 for image in test_images:
-    model.predict(image.reshape(1, 784))
+    predictions.append(model.predict(image.reshape(1, 784)))
+
+
+
+
+# Save an image as test.png
+# for proof of concept of displaying images from array
+
+# im = Image.new("RGB", (28, 28))
+# pix = im.load()
+# for x in range(27):
+#     for y in range(27):
+#         pix[x, y] = (pictures[0][y][x], 0, 0)
+#
+# im.save("test.png", "PNG")
 
 # summarize history for accuracy
-plt.plot(history.history['acc'])
-plt.plot(history.history['val_acc'])
-plt.title('model accuracy')
-plt.ylabel('accuracy')
-plt.xlabel('epoch')
-plt.legend(['train', 'test'], loc='upper left')
-plt.show()
+# plt.plot(history.history['acc'])
+# plt.plot(history.history['val_acc'])
+# plt.title('model accuracy')
+# plt.ylabel('accuracy')
+# plt.xlabel('epoch')
+# plt.legend(['train', 'test'], loc='upper left')
+# plt.show()
+
+
+
 # summarize history for loss
 # plt.plot(history.history['loss'])
 # plt.plot(history.history['val_loss'])
@@ -148,3 +92,5 @@ plt.show()
 # plt.xlabel('epoch')
 # plt.legend(['train', 'test'], loc='upper left')
 # plt.show()
+end_time = time.time()
+print (end_time-start)

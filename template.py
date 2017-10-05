@@ -6,6 +6,7 @@ from keras import utils
 from random import *
 import matplotlib.pyplot as plt
 import numpy as np
+import h5py
 from PIL import Image
 import time
 
@@ -26,10 +27,10 @@ def main():
     model = Sequential()  # declare model
     model.add(Dense(1000, input_shape=(28*28, ), kernel_initializer='he_normal')) # first layer
     model.add(Activation('tanh'))
-    model.add(Dense(1000, input_shape=(28*28, ), kernel_initializer='he_normal')) # first layer
-    model.add(Activation('tanh'))
-    model.add(Dense(1000, input_shape=(28*28, ), kernel_initializer='he_normal')) # first layer
-    model.add(Activation('tanh'))
+    # model.add(Dense(1000, input_shape=(28*28, ), kernel_initializer='he_normal')) # first layer
+    # model.add(Activation('tanh'))
+    # model.add(Dense(1000, input_shape=(28*28, ), kernel_initializer='he_normal')) # first layer
+    # model.add(Activation('tanh'))
 
     model.add(Dense(10, kernel_initializer='he_normal')) # last layer
     model.add(Activation('softmax'))
@@ -57,6 +58,7 @@ def main():
 
 
 
+
     # Save an image as test.png
     # for proof of concept of displaying images from array
 
@@ -76,6 +78,11 @@ def main():
     plt.xlabel('epoch')
     plt.legend(['train', 'validation'], loc='upper left')
     plt.show()
+
+
+    # create the confusion matrix
+
+    model.save('my_model.h5')
 
 
 if __name__ == "__main__":

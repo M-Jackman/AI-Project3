@@ -56,6 +56,27 @@ def main():
     for image in test_images:
         predictions.append(model.predict(image.reshape(1, 784)))
 
+    # find what the prediction actually is
+    prediction_labels_ints = []
+    for p in predictions:
+        # find the maximum value in the predictions list
+        prediction_labels_ints.append(p.argmax())
+
+    # make the one hot labels for the test data into ints
+    test_labels_ints = []
+    for l in test_labels:
+        test_labels_ints.append(l.argmax())
+
+
+    # create the confusion matrix
+    confusion_matrix = np.empty((10, 10))
+    confusion_matrix.fill(0)
+
+    for x in range(1624):
+        confusion_matrix[test_labels_ints[x]][prediction_labels_ints[x]] = confusion_matrix[test_labels_ints[x]][prediction_labels_ints[x]] + 1
+
+    print (confusion_matrix)
+
     # Save an image as test.png
     # for proof of concept of displaying images from array
 
@@ -68,18 +89,17 @@ def main():
     # im.save("test.png", "PNG")
 
     # summarize history for accuracy
-    plt.plot(history.history['acc'])
-    plt.plot(history.history['val_acc'])
-    plt.title('model accuracy')
-    plt.ylabel('accuracy')
-    plt.xlabel('epoch')
-    plt.legend(['train', 'validation'], loc='upper left')
-    plt.show()
+    # plt.plot(history.history['acc'])
+    # plt.plot(history.history['val_acc'])
+    # plt.title('model accuracy')
+    # plt.ylabel('accuracy')
+    # plt.xlabel('epoch')
+    # plt.legend(['train', 'validation'], loc='upper left')
+    # plt.show()
 
 
-    # create the confusion matrix
 
-    model.save('my_model.h5')
+    model.save('trained_model.h5')
 
 
 if __name__ == "__main__":

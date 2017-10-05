@@ -72,32 +72,49 @@ def main():
     confusion_matrix = np.empty((10, 10))
     confusion_matrix.fill(0)
 
+    visualize_wrong = []
+    test_wrong = []
+    prediction_wrong = []
+
     for x in range(1624):
         confusion_matrix[test_labels_ints[x]][prediction_labels_ints[x]] = confusion_matrix[test_labels_ints[x]][prediction_labels_ints[x]] + 1
+        if test_labels_ints[x]!=prediction_labels_ints[x] and len(visualize_wrong)<3:
+            visualize_wrong.append(test_images[x].reshape(28, 28))
+            test_wrong.append(test_labels_ints[x])
+            prediction_wrong.append(prediction_labels_ints[x])
 
     print (confusion_matrix)
 
     # Save an image as test.png
     # for proof of concept of displaying images from array
 
-    # im = Image.new("RGB", (28, 28))
-    # pix = im.load()
-    # for x in range(27):
-    #     for y in range(27):
-    #         pix[x, y] = (pictures[0][y][x], 0, 0)
-    #
-    # im.save("test.png", "PNG")
+    im1 = Image.new("RGB", (28, 28))
+    im2 = Image.new("RGB", (28, 28))
+    im3 = Image.new("RGB", (28, 28))
+    pix1 = im1.load()
+    pix2 = im2.load()
+    pix3 = im3.load()
+    for x in range(27):
+        for y in range(27):
+            pix1[x, y] = (visualize_wrong[0][y][x], 0, 0)
+            pix2[x, y] = (visualize_wrong[1][y][x], 0, 0)
+            pix3[x, y] = (visualize_wrong[2][y][x], 0, 0)
+    
+    im1.save("test1.png", "PNG")
+    im2.save("test2.png", "PNG")
+    im3.save("test3.png", "PNG")
+
+    print (test_wrong)
+    print (prediction_wrong)
 
     # summarize history for accuracy
-    # plt.plot(history.history['acc'])
-    # plt.plot(history.history['val_acc'])
-    # plt.title('model accuracy')
-    # plt.ylabel('accuracy')
-    # plt.xlabel('epoch')
-    # plt.legend(['train', 'validation'], loc='upper left')
-    # plt.show()
-
-
+    plt.plot(history.history['acc'])
+    plt.plot(history.history['val_acc'])
+    plt.title('model accuracy')
+    plt.ylabel('accuracy')
+    plt.xlabel('epoch')
+    plt.legend(['train', 'validation'], loc='upper left')
+    plt.show()
 
     model.save('trained_model.h5')
 

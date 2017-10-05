@@ -27,10 +27,10 @@ def main():
     model = Sequential()  # declare model
     model.add(Dense(1000, input_shape=(28*28, ), kernel_initializer='he_normal')) # first layer
     model.add(Activation('tanh'))
-    # model.add(Dense(1000, input_shape=(28*28, ), kernel_initializer='he_normal')) # first layer
-    # model.add(Activation('tanh'))
-    # model.add(Dense(1000, input_shape=(28*28, ), kernel_initializer='he_normal')) # first layer
-    # model.add(Activation('tanh'))
+    model.add(Dense(1000, input_shape=(28*28, ), kernel_initializer='he_normal')) # first layer
+    model.add(Activation('tanh'))
+    model.add(Dense(1000, input_shape=(28*28, ), kernel_initializer='he_normal')) # first layer
+    model.add(Activation('tanh'))
 
     model.add(Dense(10, kernel_initializer='he_normal')) # last layer
     model.add(Activation('softmax'))
@@ -55,9 +55,6 @@ def main():
     predictions = []
     for image in test_images:
         predictions.append(model.predict(image.reshape(1, 784)))
-
-
-
 
     # Save an image as test.png
     # for proof of concept of displaying images from array

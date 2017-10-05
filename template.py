@@ -20,10 +20,7 @@ def main():
     validation_images = np.load('validationimages.npy')
     validation_labels = np.load('validationlabels.npy')
 
-
-
-    # Model Template
-
+    # Model
     model = Sequential()  # declare model
     model.add(Dense(1000, input_shape=(28*28, ), kernel_initializer='he_normal')) # first layer
     model.add(Activation('tanh'))
@@ -31,16 +28,15 @@ def main():
     model.add(Activation('tanh'))
     model.add(Dense(1000, input_shape=(28*28, ), kernel_initializer='he_normal')) # first layer
     model.add(Activation('tanh'))
-
     model.add(Dense(10, kernel_initializer='he_normal')) # last layer
     model.add(Activation('softmax'))
-
 
     # Compile Model
     model.compile(optimizer='sgd',
                   loss='categorical_crossentropy',
                   metrics=['accuracy'])
 
+    # cast data to arrays
     training_images = np.array(training_images)
     training_labels = np.array(training_labels)
     validation_labels = np.array(validation_labels)
@@ -50,8 +46,9 @@ def main():
     history = model.fit(training_images, training_labels, validation_data = (validation_images, validation_labels), epochs=20, batch_size=1024)
 
     # Report Results
+    print(history.history)
 
-    # print(history.history)
+    # Create predictions from test data
     predictions = []
     for image in test_images:
         predictions.append(model.predict(image.reshape(1, 784)))
@@ -67,7 +64,6 @@ def main():
     for l in test_labels:
         test_labels_ints.append(l.argmax())
 
-
     # create the confusion matrix
     confusion_matrix = np.empty((10, 10))
     confusion_matrix.fill(0)
@@ -77,7 +73,9 @@ def main():
     prediction_wrong = []
 
     for x in range(1624):
+        # add one to the element in confusion_matrix
         confusion_matrix[test_labels_ints[x]][prediction_labels_ints[x]] = confusion_matrix[test_labels_ints[x]][prediction_labels_ints[x]] + 1
+        # create a list of images that are incorrectly labelled
         if test_labels_ints[x]!=prediction_labels_ints[x] and len(visualize_wrong)<3:
             visualize_wrong.append(test_images[x].reshape(28, 28))
             test_wrong.append(test_labels_ints[x])
@@ -85,9 +83,7 @@ def main():
 
     print (confusion_matrix)
 
-    # Save an image as test.png
-    # for proof of concept of displaying images from array
-
+    # Save three images that were incorrectly identified
     im1 = Image.new("RGB", (28, 28))
     im2 = Image.new("RGB", (28, 28))
     im3 = Image.new("RGB", (28, 28))
@@ -100,14 +96,16 @@ def main():
             pix2[x, y] = (visualize_wrong[1][y][x], 0, 0)
             pix3[x, y] = (visualize_wrong[2][y][x], 0, 0)
     
-    im1.save("test1.png", "PNG")
-    im2.save("test2.png", "PNG")
-    im3.save("test3.png", "PNG")
+    im1.save("visualization_image_1.png", "PNG")
+    im2.save("visualization_image_2.png", "PNG")
+    im3.save("visualization_image_3.png", "PNG")
 
+    # print out the actual labels and predicted labels of images incorrectly identified
     print (test_wrong)
     print (prediction_wrong)
 
     # summarize history for accuracy
+    # plot the model accuracy across epochs for trainng and validation data
     plt.plot(history.history['acc'])
     plt.plot(history.history['val_acc'])
     plt.title('model accuracy')
@@ -116,6 +114,7 @@ def main():
     plt.legend(['train', 'validation'], loc='upper left')
     plt.show()
 
+    # save the model
     model.save('trained_model.h5')
 
 

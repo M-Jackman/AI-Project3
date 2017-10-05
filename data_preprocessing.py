@@ -20,10 +20,9 @@ validation_labels = []
 
 # Image Preprocessing
 
-# get the images intp matrix of matrices
+# get the images into matrix of matrices
 pictures = np.load('images.npy')
 labels = np.load('labels.npy')
-
 
 # turn all the matrices of images into vectors and add them to a list
 flattened_matrices = []
@@ -93,7 +92,7 @@ for x in range(0, 975):
 test_labels = remaining_labels
 test_images = remaining_images
 
-# files for holding separated data
+# publish to files for holding separated data
 np.save("testinglabels", test_labels)
 np.save("testingimages", test_images)
 np.save("validationlabels", validation_labels)
